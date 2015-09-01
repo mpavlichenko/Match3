@@ -1,0 +1,8 @@
+{
+	"width": 10,
+	"height": 10,
+	"types": [1,2,3,4,5],
+	"elementScore": 10,
+	"minScore": 100,
+	"maxMoves": 25
+}
