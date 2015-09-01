@@ -4,6 +4,7 @@ int Engine::m_prevIndex (-1);
 
 Engine::Engine(QObject *parent) : QAbstractListModel(parent) {
 
+    //Review: delete resources in Destructor!
     delayIfAnyMatch = new QTimer(this);
     delayAddElement = new QTimer(this);
 
@@ -44,9 +45,12 @@ bool Engine::loadSettings() {
         QLoggingCategory category("loadFile");
         qCWarning(category) << "Couldn't open save file.";
         return false;
+
+        //Review: if fail to read file no parameters will be assign to m_columnsCount and others.
     }
 
     QByteArray saveData = loadFile.readAll();
+    //Review: close file when you finished deals with it.
     QJsonDocument jsonDoc(QJsonDocument::fromJson(saveData));
 
     readSettings(jsonDoc.object());
@@ -295,6 +299,7 @@ void Engine::resetBoard()
 
     if(m_model.length() == 0) {
         for(int i = 0; i < m_columnsCount*m_rowsCount; i++) {
+            //Review: seems like unnecessary remove
             beginRemoveRows(QModelIndex(), i, i);
             endRemoveRows();
 

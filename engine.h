@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 #include <QObject>
+//Review: make includes in files where you use it. move #include <QFile> in engine.cpp. Same for others;
 #include <QFile>
 #include <QDebug>
 #include <QList>
@@ -113,6 +114,7 @@ signals:
     void isVictoryChanged();
 
 public slots:
+    //Review: bad name for function.
     void doSMTH();
     void ifAnyMatch();
     void addElement();
