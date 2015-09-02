@@ -1,18 +1,9 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 #include <QObject>
-#include <QFile>
-#include <QDebug>
-#include <QList>
 #include <QAbstractListModel>
-#include <QJsonDocument>
-#include <QModelIndex>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QLoggingCategory>
+#include <QList>
 #include <QTimer>
-#include <QEventLoop>
-#include <QThread>
 
 class Engine : public QAbstractListModel {
     Q_OBJECT
@@ -25,9 +16,12 @@ class Engine : public QAbstractListModel {
     Q_PROPERTY(int minScore READ minScore NOTIFY minScoreChanged)
     Q_PROPERTY(int maxMoves READ maxMoves NOTIFY maxMovesChanged)
     Q_PROPERTY(int startCount READ startCount WRITE setStartCount NOTIFY startCountChanged)
+    Q_PROPERTY(int isVictory READ isVictory WRITE setIsVictory NOTIFY isVictoryChanged)
 
 public:
     explicit Engine(QObject *parent = nullptr);
+    ~Engine();
+
     Q_INVOKABLE void swap(int index);
     Q_INVOKABLE void resetBoard();
 
@@ -63,6 +57,9 @@ public:
     bool startCount() const;
     void setStartCount(bool startCount);
 
+    bool isVictory() const;
+    void setIsVictory(bool isVictory);
+
 private:
     int m_columnsCount;
     int m_rowsCount;
@@ -74,7 +71,8 @@ private:
     int m_scoreCount;
     int m_movesCount;
     bool m_startCount;
-    static int m_prevIndex;
+    bool m_isVictory;
+    int m_prevIndex;
 
     QTimer *delayIfAnyMatch;
     QTimer *delayAddElement;
@@ -95,6 +93,7 @@ private:
     void columnMatch();
     bool anyMatch();
     void fallDown();
+    void victory();
 
 signals:
     void currentIndexChanged();
@@ -105,9 +104,10 @@ signals:
     void minScoreChanged();
     void maxMovesChanged();
     void startCountChanged();
+    void isVictoryChanged();
 
 public slots:
-    void doSMTH();
+    void delay();
     void ifAnyMatch();
     void addElement();
 };

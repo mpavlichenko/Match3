@@ -1,6 +1,6 @@
 {
-	"width": 10,
-	"height": 10,
+    "width": 2,
+    "height": 20,
 	"types": [0,1,2,3,4],
 	"elementScore": 100,
 	"minScore": 20000,

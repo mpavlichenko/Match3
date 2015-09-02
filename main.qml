@@ -2,7 +2,7 @@ import QtQuick 2.3
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
-import engine 1.0
+import gameEngine 1.0
 
 ApplicationWindow {
     property int lastIndex: -1
@@ -23,7 +23,7 @@ ApplicationWindow {
             id: delegate
 
             Image {
-                id: rect
+                id: image
                 source: path
                 height: board.cellHeight - board.cell/5
                 width: board.cellWidth - board.cell/5
@@ -33,19 +33,19 @@ ApplicationWindow {
                     running: mainWindow.lastIndex === index && mainWindow.isClicked
 
                     NumberAnimation {
-                        target: rect;
+                        target: image;
                         duration: 40;
                         property: "rotation";
                         to: -60;
                     }
                     NumberAnimation {
-                        target: rect;
+                        target: image;
                         duration: 40;
                         property: "rotation";
                         to: 60;
                     }
                     NumberAnimation {
-                        target: rect;
+                        target: image;
                         duration: 40;
                         property: "rotation";
                         to: 0;
@@ -61,18 +61,12 @@ ApplicationWindow {
                             lastIndex = index
                             mainWindow.isClicked = true
                         }
-                        else
+                        else {
                             mainWindow.isClicked = false
+                        }
 
                         if(list.movesCount === list.maxMoves) {
-                            if(list.scoreCount >= list.minScore) {
-                                messageDialog.isVisible = true
-                                messageDialog.isVictory = true
-                            }
-                            else {
-                                messageDialog.isVisible = true
-                                messageDialog.isVictory = false
-                            }
+                            messageDialog.isVisible = true
                         }
                     }
                 }
@@ -132,15 +126,13 @@ ApplicationWindow {
         }
     }
     MessageDialog {
-        property bool isVictory: false
         property bool isVisible: false
 
         id: messageDialog
-        text: isVictory ? "My congratulations!" : "..something went wrong.."
+        text: list.isVictory ? "My congratulations!" : "..something went wrong.."
         visible: isVisible
         onAccepted: {
             list.resetBoard()
-            isVictory = false
             isVisible = false
             list.startCount = false
         }

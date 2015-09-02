@@ -1,6 +1,12 @@
 #include "engine.h"
-
-int Engine::m_prevIndex (-1);
+#include <QFile>
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QModelIndex>
+#include <QLoggingCategory>
+#include <QEventLoop>
 
 Engine::Engine(QObject *parent) : QAbstractListModel(parent) {
 
@@ -9,6 +15,7 @@ Engine::Engine(QObject *parent) : QAbstractListModel(parent) {
 
     m_scoreCount = 0;
     m_movesCount = 0;
+    m_prevIndex = -1;
     m_startCount = false;
 
     connect(delayIfAnyMatch, &QTimer::timeout, this, &Engine::ifAnyMatch);
@@ -21,13 +28,19 @@ Engine::Engine(QObject *parent) : QAbstractListModel(parent) {
     boardInitialization();
 }
 
+Engine::~Engine()
+{
+    delete delayAddElement;
+    delete delayIfAnyMatch;
+}
+
 void Engine::boardInitialization() {
 
     delayAddElement->start(50);
     delayIfAnyMatch->start(10);
 }
 
-void Engine::doSMTH() {
+void Engine::delay() {
 
     QEventLoop loop;
 
@@ -50,6 +63,8 @@ bool Engine::loadSettings() {
     QJsonDocument jsonDoc(QJsonDocument::fromJson(saveData));
 
     readSettings(jsonDoc.object());
+
+    loadFile.close();
 
     return true;
 }
@@ -80,7 +95,7 @@ void Engine::moveRight(int index) {
 
         if(anyMatch()) {
 
-            doSMTH();
+            delay();
 
             beginMoveRows(QModelIndex(), index, index, QModelIndex(), m_prevIndex);
             qSwap(m_model[index], m_model[m_prevIndex]);
@@ -88,12 +103,6 @@ void Engine::moveRight(int index) {
 
             m_movesCount -= 1;
         }
-
-        emit movesCountChanged();
-
-        m_startCount = true;
-
-        boardInitialization();
     }
 }
 
@@ -109,7 +118,7 @@ void Engine::moveLeft(int index) {
 
         if(anyMatch())  {
 
-            doSMTH();
+            delay();
 
             beginMoveRows(QModelIndex(), m_prevIndex, m_prevIndex, QModelIndex(), index);
             qSwap(m_model[index], m_model[m_prevIndex]);
@@ -117,12 +126,6 @@ void Engine::moveLeft(int index) {
 
             m_movesCount -= 1;
         }
-
-        emit movesCountChanged();
-
-        m_startCount = true;
-
-        boardInitialization();
     }
 }
 
@@ -139,7 +142,7 @@ void Engine::moveUp(int index) {
 
     if(anyMatch())  {
 
-        doSMTH();
+        delay();
 
         beginMoveRows(QModelIndex(), m_prevIndex, m_prevIndex, QModelIndex(), index);
         qSwap(m_model[index], m_model[m_prevIndex]);
@@ -150,12 +153,6 @@ void Engine::moveUp(int index) {
 
         m_movesCount -= 1;
     }
-
-    emit movesCountChanged();
-
-    m_startCount = true;
-
-    boardInitialization();
 }
 
 void Engine::moveDown(int index) {
@@ -170,7 +167,7 @@ void Engine::moveDown(int index) {
     m_movesCount += 1;
     if(anyMatch())  {
 
-        doSMTH();
+        delay();
 
         beginMoveRows(QModelIndex(), index, index, QModelIndex(), m_prevIndex);
         qSwap(m_model[index], m_model[m_prevIndex]);
@@ -181,12 +178,6 @@ void Engine::moveDown(int index) {
 
         m_movesCount -= 1;
     }
-
-    emit movesCountChanged();
-
-    m_startCount = true;
-
-    boardInitialization();
 }
 
 void Engine::ifAnyMatch() {
@@ -226,7 +217,6 @@ void Engine::fallDown() {
     }
 
     delayAddElement->start(50);
-
 }
 
 void Engine::checkUpperIndex(int index) {
@@ -297,7 +287,14 @@ void Engine::swap(int index) {
 
         m_prevIndex = -1;
         m_currentIndex = -1;
+
         emit currentIndexChanged();
+        emit movesCountChanged();
+
+        m_startCount = true;
+        victory();
+
+        boardInitialization();
     }
 }
 
@@ -330,6 +327,16 @@ void Engine::resetBoard()
             endInsertRows();
         }
     }
+}
+
+void Engine::victory() {
+
+    if(m_scoreCount >= m_minScore)
+        m_isVictory = true;
+    else
+        m_isVictory = false;
+
+    emit isVictoryChanged();
 }
 
 QVariant Engine::data(const QModelIndex &index, int role) const {
@@ -403,6 +410,16 @@ void Engine::setStartCount(bool startCount)
 {
     m_startCount = startCount;
 }
+bool Engine::isVictory() const
+{
+    return m_isVictory;
+}
+
+void Engine::setIsVictory(bool isVictory)
+{
+    m_isVictory = isVictory;
+}
+
 
 int Engine::rowCount(const QModelIndex &) const {
     return m_model.size();
