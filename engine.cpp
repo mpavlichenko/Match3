@@ -225,11 +225,6 @@ void Engine::fallDown() {
             return;
     }
 
-//    if([this]()-> bool {
-//            for(int i = this->model.length()-this->columnsCount; i < this->model.length(); i++)
-//                return this->model[i] == "" ? true : false;
-//        })
-
     delayAddElement->start(50);
 
 }
@@ -243,16 +238,12 @@ void Engine::checkUpperIndex(int index) {
             int j = i;
             m_myIndex = j;
 
-//            while(j != index) {
                 beginMoveRows(QModelIndex(), j-m_columnsCount, j-m_columnsCount, QModelIndex(), j);
                 qSwap(m_model[j], m_model[j-m_columnsCount]);
                 endMoveRows();
 
                 beginMoveRows(QModelIndex(), j, j, QModelIndex(), j-m_columnsCount);
                 endMoveRows();
-
-//                j-=columnsCount;
-//            }
             return;
         }
     }

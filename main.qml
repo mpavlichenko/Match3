@@ -6,7 +6,7 @@ import engine 1.0
 
 ApplicationWindow {
     property int lastIndex: -1
-    property bool ifClicked: false
+    property bool isClicked: false
     id: mainWindow
     width: 700
     height: 700
@@ -29,36 +29,42 @@ ApplicationWindow {
                 width: board.cellWidth - board.cell/5
                 visible: index < (modelSize - list.columnsCount) ? true : false
 
-//                SequentialAnimation {
-//                    running: mainWindow.lastIndex === index
+                SequentialAnimation {
+                    running: mainWindow.lastIndex === index && mainWindow.isClicked
 
-//                    NumberAnimation {
-//                        target: rect;
-//                        duration: 40;
-//                        property: "rotation";
-//                        to: -60;
-//                    }
-//                    NumberAnimation {
-//                        target: rect;
-//                        duration: 40;
-//                        property: "rotation";
-//                        to: 60;
-//                    }
-//                    NumberAnimation {
-//                        target: rect;
-//                        duration: 40;
-//                        property: "rotation";
-//                        to: 0;
-//                    }
-//                }
+                    NumberAnimation {
+                        target: rect;
+                        duration: 40;
+                        property: "rotation";
+                        to: -60;
+                    }
+                    NumberAnimation {
+                        target: rect;
+                        duration: 40;
+                        property: "rotation";
+                        to: 60;
+                    }
+                    NumberAnimation {
+                        target: rect;
+                        duration: 40;
+                        property: "rotation";
+                        to: 0;
+                    }
+                }
 
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
                         list.swap(index);
-                        lastIndex = index
 
-                        if(list.movesCount >= list.maxMoves) {
+                        if(!mainWindow.isClicked) {
+                            lastIndex = index
+                            mainWindow.isClicked = true
+                        }
+                        else
+                            mainWindow.isClicked = false
+
+                        if(list.movesCount === list.maxMoves) {
                             if(list.scoreCount >= list.minScore) {
                                 messageDialog.isVisible = true
                                 messageDialog.isVictory = true
@@ -84,7 +90,7 @@ ApplicationWindow {
             cellHeight: parent.height/cell
             cellWidth: parent.height/cell
             verticalLayoutDirection: GridView.BottomToTop
-            //        currentIndex: list.thisIndex
+            currentIndex: list.thisIndex
             delegate: delegate
             model: Engine {
                 id: list
@@ -130,7 +136,6 @@ ApplicationWindow {
         property bool isVisible: false
 
         id: messageDialog
-        title: isVictory ? "Good!" : ".."
         text: isVictory ? "My congratulations!" : "..something went wrong.."
         visible: isVisible
         onAccepted: {

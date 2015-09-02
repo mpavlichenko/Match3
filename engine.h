@@ -13,7 +13,6 @@
 #include <QTimer>
 #include <QEventLoop>
 #include <QThread>
-#include "list.h"
 
 class Engine : public QAbstractListModel {
     Q_OBJECT
