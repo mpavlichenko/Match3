@@ -88,12 +88,6 @@ void Engine::moveRight(int index) {
 
             m_movesCount -= 1;
         }
-
-        emit movesCountChanged();
-
-        m_startCount = true;
-
-        boardInitialization();
     }
 }
 
@@ -117,12 +111,6 @@ void Engine::moveLeft(int index) {
 
             m_movesCount -= 1;
         }
-
-        emit movesCountChanged();
-
-        m_startCount = true;
-
-        boardInitialization();
     }
 }
 
@@ -150,12 +138,6 @@ void Engine::moveUp(int index) {
 
         m_movesCount -= 1;
     }
-
-    emit movesCountChanged();
-
-    m_startCount = true;
-
-    boardInitialization();
 }
 
 void Engine::moveDown(int index) {
@@ -182,11 +164,7 @@ void Engine::moveDown(int index) {
         m_movesCount -= 1;
     }
 
-    emit movesCountChanged();
 
-    m_startCount = true;
-
-    boardInitialization();
 }
 
 void Engine::ifAnyMatch() {
@@ -297,7 +275,14 @@ void Engine::swap(int index) {
 
         m_prevIndex = -1;
         m_currentIndex = -1;
+
         emit currentIndexChanged();
+        emit movesCountChanged();
+
+        m_startCount = true;
+        victory();
+
+        boardInitialization();
     }
 }
 
@@ -330,6 +315,16 @@ void Engine::resetBoard()
             endInsertRows();
         }
     }
+}
+
+void Engine::victory() {
+
+    if(m_scoreCount >= m_minScore)
+        m_isVictory = true;
+    else
+        m_isVictory = false;
+
+    emit isVictoryChanged();
 }
 
 QVariant Engine::data(const QModelIndex &index, int role) const {
@@ -403,6 +398,16 @@ void Engine::setStartCount(bool startCount)
 {
     m_startCount = startCount;
 }
+bool Engine::isVictory() const
+{
+    return m_isVictory;
+}
+
+void Engine::setIsVictory(bool isVictory)
+{
+    m_isVictory = isVictory;
+}
+
 
 int Engine::rowCount(const QModelIndex &) const {
     return m_model.size();

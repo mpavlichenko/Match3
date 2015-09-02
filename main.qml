@@ -61,18 +61,12 @@ ApplicationWindow {
                             lastIndex = index
                             mainWindow.isClicked = true
                         }
-                        else
+                        else {
                             mainWindow.isClicked = false
+                        }
 
                         if(list.movesCount === list.maxMoves) {
-                            if(list.scoreCount >= list.minScore) {
-                                messageDialog.isVisible = true
-                                messageDialog.isVictory = true
-                            }
-                            else {
-                                messageDialog.isVisible = true
-                                messageDialog.isVictory = false
-                            }
+                            messageDialog.isVisible = true
                         }
                     }
                 }
@@ -132,15 +126,13 @@ ApplicationWindow {
         }
     }
     MessageDialog {
-        property bool isVictory: false
         property bool isVisible: false
 
         id: messageDialog
-        text: isVictory ? "My congratulations!" : "..something went wrong.."
+        text: list.isVictory ? "My congratulations!" : "..something went wrong.."
         visible: isVisible
         onAccepted: {
             list.resetBoard()
-            isVictory = false
             isVisible = false
             list.startCount = false
         }
