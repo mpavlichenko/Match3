@@ -78,6 +78,7 @@ private:
     QTimer *delayAddElement;
 
     QList<int> m_elements;
+    QList<int> m_boxes;
     QList<QString> m_model;
     QList<int> m_indexes;
 

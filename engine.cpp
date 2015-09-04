@@ -81,6 +81,11 @@ void Engine::readSettings(const QJsonObject &json) {
     for(const QJsonValueRef arr : itemsArray) {
         m_elements.append(arr.toInt());
     }
+
+    QJsonArray boxesArray = json["boxes"].toArray();
+    for(const QJsonValueRef arr : boxesArray) {
+        m_boxes.append(arr.toInt());
+    }
 }
 
 void Engine::moveRight(int index) {
