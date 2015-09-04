@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 #include <QList>
 #include <QTimer>
-
+#include <QEventLoop>
 class Engine : public QAbstractListModel {
     Q_OBJECT
 
