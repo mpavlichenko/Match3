@@ -278,16 +278,16 @@ void Engine::swap(int index) {
         m_prevIndex = index;
     }
     else {
-        if(m_prevIndex + 1 == index)
+        if(m_prevIndex + 1 == index && m_model[index] != "box.png")
             moveRight(index);
 
-        if(m_prevIndex - 1 == index)
+        if(m_prevIndex - 1 == index && m_model[index] != "box.png")
             moveLeft(index);
 
-        if(m_prevIndex + m_columnsCount == index)
+        if(m_prevIndex + m_columnsCount == index && m_model[index] != "box.png")
             moveUp(index);
 
-        if(m_prevIndex - m_columnsCount == index)
+        if(m_prevIndex - m_columnsCount == index && m_model[index] != "box.png")
             moveDown(index);
 
         m_prevIndex = -1;
@@ -311,7 +311,7 @@ void Engine::resetBoard()
     emit scoreCountChanged();
 
     if(m_model.length() == 0) {
-        for(int i = 0; i < m_columnsCount*m_rowsCount; i++) {
+        for(int i = 0; i < m_columnsCount * m_rowsCount; i++) {
             beginRemoveRows(QModelIndex(), i, i);
             endRemoveRows();
 
@@ -322,7 +322,7 @@ void Engine::resetBoard()
         }
     }
     else {
-        for(int i = 0; i < m_columnsCount*m_rowsCount; i++) {
+        for(int i = 0; i < m_columnsCount * m_rowsCount; i++) {
             beginRemoveRows(QModelIndex(), i, i);
             endRemoveRows();
 
@@ -332,6 +332,9 @@ void Engine::resetBoard()
             endInsertRows();
         }
     }
+    for(const int index : m_boxes)
+        m_model[index] = "box.png";
+
 }
 
 void Engine::victory() {

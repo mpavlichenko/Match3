@@ -30,7 +30,9 @@ ApplicationWindow {
                 visible: index < (modelSize - list.columnsCount) ? true : false
 
                 SequentialAnimation {
-                    running: mainWindow.lastIndex === index && mainWindow.isClicked
+                    running: mainWindow.lastIndex === index
+                             && mainWindow.isClicked
+                             && path !== "box.png"
 
                     NumberAnimation {
                         target: image;
@@ -55,7 +57,8 @@ ApplicationWindow {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        list.swap(index);
+                        if(path !== "box.png")
+                            list.swap(index);
 
                         if(!mainWindow.isClicked) {
                             lastIndex = index
